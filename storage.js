@@ -77,6 +77,19 @@ export class StorageHandler {
         localStorage.setItem(this.CURRENT_CHAT_KEY, chatId);
     }
 
+    // Delete a specific chat
+    static deleteChat(chatId) {
+        const chats = this.getChats();
+        if (chats[chatId]) {
+            delete chats[chatId];
+            this.saveChats(chats);
+            // If current chat is deleted, reset current chat key
+            if (localStorage.getItem(this.CURRENT_CHAT_KEY) === chatId) {
+                localStorage.removeItem(this.CURRENT_CHAT_KEY);
+            }
+        }
+    }
+
     // Clear all memory
     static clearAll() {
         localStorage.removeItem(this.CHATS_KEY);

@@ -29,6 +29,12 @@ class ChatApp {
         this.modelSelect = document.getElementById('model-select');
         this.apiKeyInput = document.getElementById('api-key-input');
         this.saveSettingsBtn = document.getElementById('save-settings-btn');
+        
+        // Context Menu elements
+        this.contextMenu = document.getElementById('context-menu');
+        this.contextRenameBtn = document.getElementById('context-rename');
+        this.contextDeleteBtn = document.getElementById('context-delete');
+        this.contextChatId = null;
 
         // State
         this.currentChatId = null;
@@ -150,6 +156,17 @@ class ChatApp {
             }
         });
 
+        // Context Menu outside click
+        document.addEventListener('click', (e) => {
+            if (e.target !== this.contextMenu && !this.contextMenu.contains(e.target)) {
+                this.contextMenu.classList.remove('active');
+            }
+        });
+
+        // Context menu actions
+        this.contextRenameBtn.addEventListener('click', () => this.handleRenameChat());
+        this.contextDeleteBtn.addEventListener('click', () => this.handleDeleteChat());
+
         this.providerSelect.addEventListener('change', (e) => {
             this.populateModels(e.target.value);
         });
@@ -221,9 +238,19 @@ class ChatApp {
             item.dataset.id = chat.id;
             item.innerHTML = `
                 <i class="fa-regular fa-message"></i>
-                <span>${this.escapeHtml(chat.title)}</span>
+                <span class="chat-title-text">${this.escapeHtml(chat.title)}</span>
             `;
             item.addEventListener('click', () => this.switchChat(chat.id));
+            
+            // Context menu event
+            item.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.contextChatId = chat.id;
+                this.contextMenu.style.top = `${e.clientY}px`;
+                this.contextMenu.style.left = `${e.clientX}px`;
+                this.contextMenu.classList.add('active');
+            });
+            
             this.chatList.appendChild(item);
         });
     }
@@ -258,6 +285,37 @@ class ChatApp {
         if(confirm("Are you sure you want to delete all chats? This cannot be undone.")) {
             StorageHandler.clearAll();
             this.createNewChat();
+        }
+    }
+
+    handleRenameChat() {
+        this.contextMenu.classList.remove('active');
+        if (!this.contextChatId) return;
+
+        const chat = StorageHandler.getChat(this.contextChatId);
+        if (!chat) return;
+
+        const newTitle = prompt("Enter new name for chat:", chat.title);
+        if (newTitle !== null && newTitle.trim() !== "") {
+            StorageHandler.updateChat(this.contextChatId, chat.messages, newTitle.trim());
+            this.loadSessions();
+            if (this.currentChatId === this.contextChatId) {
+                this.currentChatTitle.textContent = newTitle.trim();
+            }
+        }
+    }
+
+    handleDeleteChat() {
+        this.contextMenu.classList.remove('active');
+        if (!this.contextChatId) return;
+        
+        if (confirm("Are you sure you want to delete this chat?")) {
+            StorageHandler.deleteChat(this.contextChatId);
+            if (this.currentChatId === this.contextChatId) {
+                this.createNewChat();
+            } else {
+                this.loadSessions();
+            }
         }
     }
 
