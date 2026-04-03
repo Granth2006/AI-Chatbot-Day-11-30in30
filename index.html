@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" id="highlight-theme">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" id="new-chat-btn">
+                    <i class="fa-solid fa-plus"></i> New chat
+                </button>
+            </div>
+            <div class="chat-history-list" id="chat-history-list">
+                <!-- Chat history items will populate here dynamically -->
+            </div>
+            <div class="sidebar-footer">
+                <button class="action-btn" id="clear-all-btn" title="Clear all data">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+                <button class="action-btn" id="settings-btn" title="Settings">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+                <div class="theme-toggle">
+                    <button class="action-btn" id="theme-toggle-btn" title="Toggle Theme">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <header class="chat-header">
+                <button class="menu-btn" id="menu-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h2 id="current-chat-title">New Chat</h2>
+                <button class="action-btn" id="export-chat-btn" title="Export Chat">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+            </header>
+
+            <div class="chat-container" id="chat-container">
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-icon"><i class="fa-solid fa-robot"></i></div>
+                    <h1>How can I help you today?</h1>
+                    <p>Provide an API key in config.js to start chatting. <br> (Default logic is configured for Groq API)</p>
+                </div>
+                <div class="messages-wrapper" id="messages-wrapper">
+                    <!-- Messages will be injected here -->
+                </div>
+                <div class="typing-indicator hidden" id="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <button class="voice-btn" id="voice-btn" title="Voice Input (Speech to Text)">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <textarea id="message-input" placeholder="Message AI..." rows="1" autofocus></textarea>
+                    <button class="send-btn" id="send-btn" title="Send (Enter)">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-footer">
+                    AI can make mistakes. Consider verifying important information.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="close-btn" id="close-settings-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="provider-select">AI Provider</label>
+                    <select id="provider-select">
+                        <option value="groq">Groq</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="model-select">Model</label>
+                    <select id="model-select">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="api-key-input">API Key</label>
+                    <input type="password" id="api-key-input" placeholder="Enter your API key">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="save-settings-btn" id="save-settings-btn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main scripts initialization -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
